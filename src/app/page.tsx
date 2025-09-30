@@ -25,11 +25,11 @@ type LicensePlateMatch = {
 type DetectionResponse = {
   license_plates: LicensePlateMatch[];
   processed_image_path?: string;
+  processed_image_url?: string;
 };
 
-const API_ENDPOINT =
-  "https://bf8ba2adfa84.ngrok-free.app/api/license-plate/detect/";
-const API_ORIGIN = new URL(API_ENDPOINT).origin;
+const API_PROXY_ENDPOINT = "/api/license-plate/detect";
+const BACKEND_ORIGIN = "https://bf8ba2adfa84.ngrok-free.app";
 
 export default function LicensePlateDetectionPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -108,7 +108,7 @@ export default function LicensePlateDetectionPage() {
       formData.append("file", selectedFile);
 
       const response = await fetch(
-        `${API_ENDPOINT}?confidence=${confidence.toFixed(2)}`,
+        `${API_PROXY_ENDPOINT}?confidence=${confidence.toFixed(2)}`,
         {
           method: "POST",
           body: formData,
@@ -127,12 +127,13 @@ export default function LicensePlateDetectionPage() {
       setResult({
         license_plates: plates,
         processed_image_path: data.processed_image_path,
+        processed_image_url: data.processed_image_url,
       });
 
-      if (data.processed_image_path) {
-        const normalizedPath = data.processed_image_path.startsWith("http")
-          ? data.processed_image_path
-          : `${API_ORIGIN}/${data.processed_image_path.replace(/^\//, "")}`;
+      if (data.processed_image_url || data.processed_image_path) {
+        const normalizedPath = data.processed_image_url
+          ? data.processed_image_url
+          : `${BACKEND_ORIGIN}/${data.processed_image_path!.replace(/^\//, "")}`;
         setProcessedImageUrl(normalizedPath);
       }
 
@@ -245,7 +246,7 @@ export default function LicensePlateDetectionPage() {
               className="primary-button"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Đang xử lý..." : "Gửi tới máy chủ"}
+              {isSubmitting ? "Đang xử lý..." : "Gửi"}
             </button>
             <button
               type="button"
@@ -307,7 +308,7 @@ export default function LicensePlateDetectionPage() {
 
             {processedImageUrl ? (
               <div className="processed-section">
-                <h3 className="section-subtitle">���nh đã xử lý từ hệ thống</h3>
+                <h3 className="section-subtitle">Ảnh đã xử lý từ hệ thống</h3>
                 <div className="processed-preview">
                   <img
                     src={processedImageUrl}
