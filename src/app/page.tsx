@@ -136,7 +136,10 @@ export default function LicensePlateDetectionPage() {
         setProcessedImageUrl(normalizedPath);
       }
 
-      setStatusMessage("Phân tích thành công.");
+      const successSummary = plates.length
+        ? `Phân tích thành công: phát hiện ${plates.length} biển số.`
+        : "Phân tích thành công nhưng không phát hiện biển số nào.";
+      setStatusMessage(successSummary);
     } catch (error) {
       console.error(error);
       const fallbackMessage =
@@ -304,7 +307,7 @@ export default function LicensePlateDetectionPage() {
 
             {processedImageUrl ? (
               <div className="processed-section">
-                <h3 className="section-subtitle">Ảnh đã xử lý từ hệ thống</h3>
+                <h3 className="section-subtitle">���nh đã xử lý từ hệ thống</h3>
                 <div className="processed-preview">
                   <img
                     src={processedImageUrl}
