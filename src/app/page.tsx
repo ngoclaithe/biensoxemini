@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ChangeEvent,
   FormEvent,
   useEffect,
   useMemo,
@@ -66,7 +67,7 @@ export default function LicensePlateDetectionPage() {
     return result?.license_plates ?? [];
   }, [result]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -247,7 +248,10 @@ export default function LicensePlateDetectionPage() {
               type="button"
               className="secondary-button"
               onClick={handleReset}
-              disabled={isSubmitting && !selectedFile && !result}
+              disabled={
+                isSubmitting ||
+                (!selectedFile && !result && !statusMessage && !errorMessage)
+              }
             >
               Làm mới
             </button>
